@@ -8,9 +8,9 @@
 
 Browse course resources, learn from practical guides, explore career opportunities, and take a short break with free coding games.
 
-[Visit the website](https://procoderji.com) · [Report a bug](https://github.com/Coding-Professional/procoderji/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/Coding-Professional/procoderji/issues/new?template=feature_request.yml)
+[Visit the website](https://procoderji.com) · [Report a bug](https://github.com/procoderji-com/procoderji/issues/new?template=bug_report.yml) · [Request a feature](https://github.com/procoderji-com/procoderji/issues/new?template=feature_request.yml)
 
-[![CI](https://github.com/Coding-Professional/procoderji/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Coding-Professional/procoderji/actions/workflows/ci.yml)
+[![CI](https://github.com/procoderji-com/procoderji/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/procoderji-com/procoderji/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)](https://www.typescriptlang.org/)
@@ -72,7 +72,7 @@ Sample files under `src/content` are intentionally not registered as published n
 Clone the repository and install its locked dependencies:
 
 ```bash
-git clone https://github.com/Coding-Professional/procoderji.git
+git clone https://github.com/procoderji-com/procoderji.git
 cd procoderji
 npm ci
 npm run dev
