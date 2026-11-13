@@ -3,7 +3,7 @@
 import React, { Suspense } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronRight, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronRight, GraduationCap, LayoutDashboard, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FloatingLogo } from "@/components/floating-logo";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -52,7 +52,7 @@ function BranchSelector() {
                         <button
                             type="button"
                             onClick={() => setBranch(null)}
-                            className="text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors px-2 py-2"
+                            className="min-h-11 text-xs font-medium text-gray-500 hover:text-gray-900 transition-colors px-2 py-2"
                         >
                             Change branch
                         </button>
@@ -70,14 +70,15 @@ function BranchSelector() {
                                 exit={{ opacity: 0, x: -20 }}
                                 className="space-y-4"
                             >
-                                <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-2 gap-3 sm:gap-4">
                                     {branches.map((branch) => (
                                         <button
                                             type="button"
                                             key={`${branch.courseSlug}/${branch.slug}`}
                                             onClick={() => setBranch(branch.slug)}
-                                            className="group border border-gray-800 flex flex-col items-center justify-center p-6 rounded-2xl bg-white hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                                            className="group flex min-h-20 items-center justify-center gap-2 rounded-2xl border border-gray-800 bg-white p-4 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 sm:p-6"
                                         >
+                                            <GraduationCap aria-hidden="true" className="h-5 w-5 shrink-0 text-amber-700" />
                                             <span className="font-semibold text-gray-900 group-hover:text-primary transition-colors">{branch.label}</span>
                                         </button>
                                     ))}
@@ -99,7 +100,7 @@ function BranchSelector() {
                                     <Link
                                         key={sem.slug}
                                         href={dashboardHref([selected.courseSlug, selected.slug, sem.slug])}
-                                        className="group border border-gray-800 flex flex-col items-center justify-center p-4 sm:p-6 rounded-2xl bg-white hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
+                                        className="group border border-gray-800 flex min-w-0 flex-col items-center justify-center p-3 sm:p-6 rounded-2xl bg-white hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300"
                                     >
                                         <span className="text-3xl font-black text-gray-300 group-hover:text-gray-500 mb-2 transition-colors">{i + 1}</span>
                                         <span className="font-bold text-gray-900 group-hover:text-gray-800 transition-colors">Semester</span>
@@ -121,13 +122,14 @@ function BranchSelector() {
 function SelectorFallback() {
     return (
         <div className="mt-10 sm:mt-16 w-full max-w-3xl relative z-10 rounded-3xl border border-gray-800 bg-white/80 p-6 min-h-[240px]">
-            <div className="grid grid-cols-1 min-[420px]:grid-cols-2 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 {branches.map((branch) => (
                     <Link
                         key={`${branch.courseSlug}/${branch.slug}`}
                         href={`/?branch=${encodeURIComponent(branch.slug)}`}
-                        className="border border-gray-800 flex items-center justify-center p-6 rounded-2xl bg-white font-semibold text-gray-900"
+                        className="flex min-h-20 items-center justify-center gap-2 rounded-2xl border border-gray-800 bg-white p-4 font-semibold text-gray-900 sm:p-6"
                     >
+                        <GraduationCap aria-hidden="true" className="h-5 w-5 shrink-0 text-amber-700" />
                         {branch.label}
                     </Link>
                 ))}
@@ -138,7 +140,7 @@ function SelectorFallback() {
 
 export function Hero() {
     return (
-        <section className="flex-1 flex flex-col items-center justify-center px-4 py-16 sm:py-24 text-center relative overflow-hidden">
+        <section data-home-hero className="flex-1 flex flex-col items-center justify-center px-4 py-12 sm:py-20 lg:py-24 text-center relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-50 pointer-events-none" />
 
             <FloatingLogo />
@@ -154,8 +156,8 @@ export function Hero() {
                     <span>Free learning. Focused placement practice.</span>
                 </div>
 
-                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.1] break-words">
-                    Build skills for <br className="hidden sm:block" />
+                <h1 className="text-[clamp(2.125rem,8vw,3.75rem)] lg:text-7xl font-extrabold tracking-tight text-gray-900 leading-[1.1] break-words">
+                    Build skills for <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-500 via-amber-500 to-gray-900">
                         your next opportunity
                     </span>
@@ -165,9 +167,9 @@ export function Hero() {
                     Practise aptitude, reasoning, verbal ability, and programming with clear explanations.
                     Save your progress, find your next topic, and build a study routine at your own pace.
                 </p>
-                <div className="flex flex-wrap justify-center gap-3">
-                    <Link href="/practice" className="inline-flex min-h-12 items-center rounded-xl bg-gray-900 px-6 py-3 font-bold text-white hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gray-900">Start placement practice</Link>
-                    <Link href="/learn" className="inline-flex min-h-12 items-center rounded-xl border border-gray-300 bg-white px-6 py-3 font-semibold text-gray-900 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gray-900">My learning workspace</Link>
+                <div className="mx-auto flex max-w-sm flex-col justify-center gap-3 sm:max-w-none sm:flex-row sm:flex-wrap">
+                    <Link href="/practice" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gray-900 px-5 py-3 font-bold text-white hover:bg-gray-800 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gray-900">Start placement practice<ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" /></Link>
+                    <Link href="/learn" className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-gray-300 bg-white px-5 py-3 font-semibold text-gray-900 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gray-900"><LayoutDashboard aria-hidden="true" className="h-4 w-4 shrink-0" />My learning workspace</Link>
                 </div>
             </motion.div>
 

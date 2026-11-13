@@ -2,6 +2,7 @@ import { chromium, devices } from "playwright-core";
 import fs from "node:fs";
 import path from "node:path";
 import { runPortfolioChecks } from "./portfolio-checks.mjs";
+import { installCaptchaFixture, runContactChecks } from "./contact-checks.mjs";
 
 const BASE = process.env.BASE || "http://localhost:3150";
 const CHANNEL = process.env.E2E_CHANNEL || "chrome";
@@ -34,6 +35,7 @@ const browser = await chromium.launch({ channel: CHANNEL, headless: true });
 
 for (const [vpName, opts] of Object.entries(VIEWPORTS)) {
   const context = await browser.newContext(opts);
+  if (FULLSTACK) await installCaptchaFixture(context);
   for (const url of PAGES) {
     const page = await context.newPage();
     const errors = [];
@@ -103,6 +105,7 @@ for (const [vpName, opts] of Object.entries(VIEWPORTS)) {
 // ---------- interactions ----------
 async function interaction(name, vpName, fn) {
   const context = await browser.newContext(VIEWPORTS[vpName]);
+  if (FULLSTACK) await installCaptchaFixture(context);
   const page = await context.newPage();
   const errs = [];
   page.on("pageerror", (e) => errs.push(e.message));
@@ -167,16 +170,28 @@ await interaction("home: mobile menu opens, lists links, closes", "mobile", asyn
   await btn.click();
   await page.locator("#mobile-menu").waitFor({ state: "visible" });
   expectTrue((await page.getByRole("button", { name: /close menu/i }).getAttribute("aria-expanded")) === "true", "aria-expanded should be true when open");
-  for (const t of ["About", "Games", "Contact", "Guides", "Jobs", "Browse Notes"]) {
+  for (const t of ["Browse Notes", "Placement practice", "Games", "About", "Contact"]) {
     expectTrue(await page.locator("#mobile-menu").getByText(t, { exact: true }).isVisible(), `menu should list ${t}`);
   }
   await page.getByRole("button", { name: /close menu/i }).click();
   await page.locator("#mobile-menu").waitFor({ state: "hidden" });
 });
 
+await interaction("home: original mobile menu links remain reachable on short screens", "mobile", async (page) => {
+  await page.setViewportSize({ width: 320, height: 568 });
+  await page.goto(BASE + "/", { waitUntil: "load" });
+  await page.getByRole("button", { name: "Open menu", exact: true }).click();
+  const notes = page.locator("#mobile-menu").getByRole("link", { name: "Browse Notes", exact: true });
+  await notes.scrollIntoViewIfNeeded();
+  const bounds = await notes.boundingBox();
+  expectTrue(bounds.y + bounds.height <= 568, "last menu action stays within the viewport");
+  await page.getByRole("button", { name: "Close menu", exact: true }).click();
+  await page.locator("#mobile-menu").waitFor({ state: "hidden" });
+});
+
 await interaction("home: desktop nav has working links", "desktop", async (page) => {
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
-  for (const [t, href] of [["Games", "/games"], ["Guides", "/guides"], ["Jobs", "/jobs"], ["Browse Notes", "/dashboard"]]) {
+  for (const [t, href] of [["Browse Notes", "/dashboard"], ["Placement practice", "/practice"], ["Games", "/games"], ["About", "/about"], ["Contact", "/#contact"]]) {
     const a = page.locator("nav").getByRole("link", { name: t, exact: true }).first();
     expectTrue((await a.getAttribute("href")) === href, `${t} should link to ${href}`);
   }
@@ -272,7 +287,7 @@ await interaction("skip link is first tab stop and works", "desktop", async (pag
   expectTrue(page.url().endsWith("#main-content"), "skip link jumps to main");
 });
 
-await interaction("contact form: required validation, labels, mailto target", "desktop", async (page) => {
+await interaction("contact form: required fields and CAPTCHA gate", "desktop", async (page) => {
   await page.goto(BASE + "/", { waitUntil: "networkidle" });
   const form = page.locator("form").first();
   expectTrue(!(await form.evaluate((f) => f.checkValidity())), "empty form should be invalid");
@@ -282,6 +297,7 @@ await interaction("contact form: required validation, labels, mailto target", "d
   await page.fill("#contact-name", "QA"); await page.fill("#contact-email", "qa@example.com");
   await page.fill("#contact-subject", "Hi"); await page.fill("#contact-message", "Hello");
   expectTrue(await form.evaluate((f) => f.checkValidity()), "filled form valid");
+  expectTrue(await page.getByRole("button", { name: "Send message", exact: true }).isDisabled(), "sending requires a verified CAPTCHA");
 });
 
 await interaction("dashboard: mobile drawer opens, Escape closes", "mobile", async (page) => {
@@ -290,8 +306,12 @@ await interaction("dashboard: mobile drawer opens, Escape closes", "mobile", asy
   const dlg = page.getByRole("dialog");
   await dlg.waitFor({ state: "visible" });
   expectTrue(await dlg.getByRole("link", { name: /Browse Notes/ }).isVisible(), "drawer has Browse Notes");
+  await page.getByRole("button", { name: "Close navigation menu", exact: true }).focus();
+  await page.keyboard.press("Shift+Tab");
+  expectTrue(await dlg.evaluate(el => el.contains(document.activeElement)), "keyboard focus stays inside the drawer");
   await page.keyboard.press("Escape");
   await dlg.waitFor({ state: "hidden" });
+  expectTrue(await page.getByRole("button", { name: /open navigation menu/i }).evaluate(el => el === document.activeElement), "drawer closes back to its toggle");
 });
 
 await interaction("dashboard: sidebar expands to semester and navigates (desktop)", "desktop", async (page) => {
@@ -449,6 +469,7 @@ await interaction("privacy page discloses every third-party host the site contac
 });
 
 if (FULLSTACK) {
+  findings.push(...await runContactChecks({ browser, base: BASE }));
   try {
     findings.push(...await runPortfolioChecks({ browser, base: BASE, backendOrigin: process.env.E2E_BACKEND_ORIGIN || "http://127.0.0.1:5151" }));
   } catch (error) {

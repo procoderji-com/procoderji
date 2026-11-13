@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Mail } from "lucide-react";
+import { ArrowRight, BookOpen, Mail } from "lucide-react";
 import { LEGAL_PAGES } from "@/lib/legal";
 import { getGuides, getJobs } from "@/lib/content-data";
 import { motion } from "framer-motion";
@@ -20,7 +20,7 @@ export function Footer() {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8, ease: "easeOut" }}
-                    className="relative rounded-[2.5rem] border border-gray-800 overflow-hidden p-8 md:p-12 lg:p-16 "
+                    className="relative rounded-[2.5rem] border border-gray-800 overflow-hidden p-5 sm:p-8 md:p-12 lg:p-16"
                 >
                     <div className="absolute inset-0 opacity-20">
                         <div className="absolute top-0 -left-1/4 w-1/2 h-1/2 bg-yellow-300/40 rounded-full blur-[120px] animate-pulse" />
@@ -41,7 +41,7 @@ export function Footer() {
                                 initial={{ opacity: 0, y: 20 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 transition={{ delay: 0.3 }}
-                                className="text-4xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight"
+                                className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.1] tracking-tight"
                             >
                                 STUDY BETTER WITH <br />
                                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-600 to-gray-900">
@@ -57,17 +57,18 @@ export function Footer() {
                             >
                                 <Link
                                     href="/dashboard"
-                                    className="px-8 py-4 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-all shadow-lg"
+                                    className="inline-flex min-h-12 items-center justify-center gap-2 px-6 py-4 bg-gray-900 text-white font-bold rounded-xl hover:bg-gray-800 transition-colors shadow-lg"
                                 >
+                                    <BookOpen aria-hidden="true" className="h-4 w-4 shrink-0" />
                                     Browse Notes
                                 </Link>
                                 <a
                                     href="mailto:procoderji@gmail.com"
                                     className="px-8 py-4 bg-white/80 border border-gray-200 text-gray-900 font-semibold rounded-xl hover:bg-white transition-all flex items-center gap-2 group"
                                 >
-                                    <Mail className="w-5 h-5" />
+                                    <Mail aria-hidden="true" className="w-5 h-5" />
                                     <span>Contact</span>
-                                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                    <ArrowRight aria-hidden="true" className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </a>
                             </motion.div>
                         </div>
@@ -77,7 +78,7 @@ export function Footer() {
                                 initial={{ opacity: 0 }}
                                 whileInView={{ opacity: 1 }}
                                 transition={{ delay: 0.5 }}
-                                className="grid grid-cols-2 gap-12 lg:pl-20"
+                                className="grid grid-cols-2 gap-6 sm:gap-12 lg:pl-20"
                             >
                                 <div>
                                     <h3 className="font-bold mb-6 uppercase tracking-wider text-sm">Platform</h3>
@@ -136,7 +137,7 @@ export function Footer() {
                         <p>Copyright {new Date().getFullYear()} ProCoderJii. All rights reserved.</p>
                         <nav aria-label="Legal" className="flex flex-wrap justify-center gap-x-5 gap-y-2">
                             {LEGAL_PAGES.filter((p) => p.path !== "/about").map((p) => (
-                                <Link key={p.path} href={p.path} className="hover:text-gray-700 underline-offset-2 hover:underline">
+                                <Link key={p.path} href={p.path} className="inline-flex min-h-11 items-center hover:text-gray-700 underline-offset-2 hover:underline sm:min-h-0">
                                     {p.label}
                                 </Link>
                             ))}

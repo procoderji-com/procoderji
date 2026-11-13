@@ -119,4 +119,7 @@
   body {
     @apply bg-background text-foreground;
   }
+  section[id] {
+    scroll-margin-top: calc(var(--site-header-height, 76px) + 0.5rem);
+  }
 }
